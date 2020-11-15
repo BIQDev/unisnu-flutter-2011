@@ -13,7 +13,7 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Header(),
-            BookList(),
+            new Expanded(child: BookList()),
           ],
         ),
       ),

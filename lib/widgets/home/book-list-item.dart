@@ -5,7 +5,7 @@ class BookListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridTile(
       child: Image.asset(
-        "assets/icon/icon-710x710-android.png",
+        "assets/mock/book.png",
         width: 80,
         height: 80,
         fit: BoxFit.cover,
