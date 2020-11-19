@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class BookListItem extends StatelessWidget {
+  @required
+  final String id;
+  @required
+  final String title;
+  @required
+  final String imagePath;
+
+  BookListItem({this.id, this.title, this.imagePath});
+
   @override
   Widget build(BuildContext context) {
     return GridTile(
       child: Image.asset(
-        "assets/mock/book.png",
+        this.imagePath,
         width: 80,
         height: 80,
         fit: BoxFit.cover,
@@ -28,9 +38,9 @@ class BookListItem extends StatelessWidget {
       ),
       footer: GridTileBar(
         backgroundColor: Colors.black54,
-        title: Text("Judul buku"),
+        title: Text(this.title),
         trailing: IconButton(
-          splashColor: Colors.red[100],
+          splashColor: Colors.red[400],
           icon: Icon(Icons.favorite),
           onPressed: () {},
         ),
