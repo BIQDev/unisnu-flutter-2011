@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:perpus/screens/book-add.dart';
 import 'package:provider/provider.dart';
 
 import 'package:perpus/screens/home-page.dart';
@@ -22,6 +23,9 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: MyHomePage(),
+        routes: {
+          BookAddScreen.routeName: (ctx) => BookAddScreen(),
+        },
       ),
     );
   }
