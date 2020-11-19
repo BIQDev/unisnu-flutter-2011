@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BookAddScreen extends StatelessWidget {
+class BookInputScreen extends StatelessWidget {
   static const routeName = "/book-add";
 
   @override
