@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:perpus/screens/home-page.dart';
 import 'package:perpus/providers/booklist_provider.dart';
+import 'package:perpus/providers/setting_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => BookListProvider()),
+        ChangeNotifierProvider(create: (_) => SettingProvider()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
