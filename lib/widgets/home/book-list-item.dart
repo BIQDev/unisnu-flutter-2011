@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:perpus/screens/book-input.dart';
 
 class BookListItem extends StatelessWidget {
   @required
@@ -27,7 +28,13 @@ class BookListItem extends StatelessWidget {
             splashColor: Colors.orange[100],
             color: Colors.deepOrangeAccent,
             icon: Icon(Icons.edit),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(
+                BookInputScreen.routeName,
+                arguments: BookInputScreenArguments(
+                    id: this.id, title: this.title, imagePath: this.imagePath),
+              );
+            },
           ),
           IconButton(
             color: Colors.redAccent,

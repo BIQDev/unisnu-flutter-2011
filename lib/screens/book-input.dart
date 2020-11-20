@@ -2,6 +2,13 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
+class BookInputScreenArguments {
+  final String id;
+  final String title;
+  final String imagePath;
+  BookInputScreenArguments({this.id, this.title, this.imagePath});
+}
+
 class BookInputScreen extends StatefulWidget {
   static const routeName = "/book-add";
 
@@ -12,6 +19,7 @@ class BookInputScreen extends StatefulWidget {
 class _BookInputScreenState extends State<BookInputScreen> {
   File _image;
   final picker = ImagePicker();
+
   Future _pickImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
@@ -26,9 +34,13 @@ class _BookInputScreenState extends State<BookInputScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final BookInputScreenArguments args =
+        ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tambah Buku"),
+        title: args == null || args.id == null
+            ? const Text("Tambah Buku")
+            : const Text("Edit Buku"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),

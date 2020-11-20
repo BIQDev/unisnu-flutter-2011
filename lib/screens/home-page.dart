@@ -19,8 +19,11 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            {Navigator.of(context).pushNamed(BookInputScreen.routeName)},
+        onPressed: () => {
+          Navigator.of(context).pushNamed(
+            BookInputScreen.routeName,
+          ),
+        },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
