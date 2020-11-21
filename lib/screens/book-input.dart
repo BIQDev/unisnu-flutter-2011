@@ -37,7 +37,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
   Widget build(BuildContext context) {
     final BookInputScreenArguments args =
         ModalRoute.of(context).settings.arguments;
-    if (args.id != null) {
+    if (args != null && args.id != null) {
       this.title = args.title;
     }
     return Scaffold(

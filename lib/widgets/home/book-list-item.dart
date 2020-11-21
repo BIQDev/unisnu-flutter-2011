@@ -18,7 +18,7 @@ class BookListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridTile(
       child: Image.network(
-        "${this.apiHost}/${this.imagePath}",
+        "${this.apiHost}/perpus-api/${this.imagePath}",
         width: 80,
         height: 80,
         fit: BoxFit.cover,

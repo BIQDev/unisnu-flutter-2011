@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:perpus/models/booklist_model.dart';
 import 'package:perpus/providers/setting_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -11,19 +12,45 @@ class BookList extends StatefulWidget {
 }
 
 class _BookListState extends State<BookList> {
+  List<BookListModel> _bookList;
+  String _apiHost;
+  bool _isInitialized;
+
+  // @override
+  // void initState() {
+  //   Future.delayed(Duration.zero).then((_) {
+  //     final bookListData = Provider.of<BookListProvider>(context);
+  //     bookListData.fetchList(context);
+  //   });
+
+  //   super.initState();
+  // }
+
+  @override
+  void didChangeDependencies() {
+    final settingData = Provider.of<SettingProvider>(context);
+    this._apiHost = settingData.setting.apiHost;
+    final bookListData = Provider.of<BookListProvider>(context);
+    this._bookList = bookListData.list;
+
+    if (this._isInitialized == null || !this._isInitialized) {
+      bookListData.fetchList(context);
+      this._isInitialized = true;
+    }
+
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final settingData = Provider.of<SettingProvider>(context);
-    final bookListData = Provider.of<BookListProvider>(context);
-    final bookList = bookListData.list;
     return GridView.builder(
       padding: EdgeInsets.all(10),
-      itemCount: bookList.length,
+      itemCount: this._bookList == null ? 0 : this._bookList.length,
       itemBuilder: (ctx, i) => BookListItem(
-        apiHost: settingData.setting.apiHost,
-        id: bookList[i].id,
-        title: bookList[i].title,
-        imagePath: bookList[i].imagePath,
+        apiHost: this._apiHost,
+        id: this._bookList[i].id,
+        title: this._bookList[i].title,
+        imagePath: this._bookList[i].imagePath,
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,

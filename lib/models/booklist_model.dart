@@ -12,4 +12,9 @@ class BookListModel {
     @required this.imagePath,
     this.isFavourite = false,
   });
+
+  BookListModel.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        title = json['title'],
+        imagePath = json['image_path'];
 }

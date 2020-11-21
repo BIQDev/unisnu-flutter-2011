@@ -1,5 +1,6 @@
 class SettingModel {
   final String apiHost;
+  final String userName;
 
-  SettingModel({this.apiHost});
+  SettingModel({this.apiHost, this.userName});
 }
