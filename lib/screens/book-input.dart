@@ -17,6 +17,7 @@ class BookInputScreen extends StatefulWidget {
 }
 
 class _BookInputScreenState extends State<BookInputScreen> {
+  String title;
   File _image;
   final picker = ImagePicker();
 
@@ -36,6 +37,9 @@ class _BookInputScreenState extends State<BookInputScreen> {
   Widget build(BuildContext context) {
     final BookInputScreenArguments args =
         ModalRoute.of(context).settings.arguments;
+    if (args.id != null) {
+      this.title = args.title;
+    }
     return Scaffold(
       appBar: AppBar(
         title: args == null || args.id == null
@@ -51,6 +55,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
               children: <Widget>[
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Title'),
+                  initialValue: this.title,
                 ),
                 SizedBox(height: 10),
                 FlatButton.icon(

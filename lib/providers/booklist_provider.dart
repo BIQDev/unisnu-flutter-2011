@@ -6,17 +6,17 @@ class BookListProvider with ChangeNotifier {
     BookListModel(
       id: "1",
       title: "Judul 1",
-      imagePath: "assets/mock/book.png",
+      imagePath: "perpus-api/assets/book.png",
     ),
     BookListModel(
       id: "2",
       title: "Judul 2",
-      imagePath: "assets/mock/book.png",
+      imagePath: "perpus-api/assets/book.png",
     ),
     BookListModel(
       id: "3",
       title: "Judul 3",
-      imagePath: "assets/mock/book.png",
+      imagePath: "perpus-api/assets/book.png",
     ),
   ];
 

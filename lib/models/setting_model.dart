@@ -1,5 +1,5 @@
 class SettingModel {
-  final String apiBaseUri;
+  final String apiHost;
 
-  SettingModel({this.apiBaseUri});
+  SettingModel({this.apiHost});
 }

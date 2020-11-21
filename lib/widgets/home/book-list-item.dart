@@ -4,19 +4,21 @@ import 'package:perpus/screens/book-input.dart';
 
 class BookListItem extends StatelessWidget {
   @required
+  final String apiHost;
+  @required
   final String id;
   @required
   final String title;
   @required
   final String imagePath;
 
-  BookListItem({this.id, this.title, this.imagePath});
+  BookListItem({this.apiHost, this.id, this.title, this.imagePath});
 
   @override
   Widget build(BuildContext context) {
     return GridTile(
-      child: Image.asset(
-        this.imagePath,
+      child: Image.network(
+        "${this.apiHost}/${this.imagePath}",
         width: 80,
         height: 80,
         fit: BoxFit.cover,
