@@ -1,12 +1,9 @@
 import 'dart:io';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as path;
-import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:perpus/models/booklist_model.dart';
+import 'package:perpus/providers/booklist_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:mime/mime.dart';
 
 import 'package:perpus/providers/setting_provider.dart';
 
@@ -79,33 +76,29 @@ class _BookInputScreenState extends State<BookInputScreen> {
   }
 
   Future<void> _submit(BuildContext submitContext) async {
-    if (!this.inputIsValid) {
-      return;
-    }
+    final BookListModel inputData = new BookListModel(
+      id: null,
+      title: this._title,
+      imagePath: null,
+      imageFile: this._image,
+    );
+    final BookListProvider booklistData =
+        Provider.of<BookListProvider>(submitContext, listen: false);
+    Map<String, dynamic> submitRes =
+        await booklistData.write(submitContext, inputData);
 
-    List mimeStr = lookupMimeType(this._image.path).split("/");
-
-    var imageBytes = await this._image.readAsBytes();
-    var uri =
-        Uri.parse('${this._apiHost}/perpus-api/booklist/${this._userName}');
-    var request = http.MultipartRequest('POST', uri)
-      ..fields['title'] = this._title
-      ..files.add(http.MultipartFile.fromBytes('image', imageBytes,
-          filename: path.basename(this._image.path),
-          contentType: MediaType(mimeStr[0], mimeStr[1])));
-    try {
-      http.StreamedResponse res = await request.send();
-      final String respStr = await res.stream.bytesToString();
-      Map<String, dynamic> resDecoded = json.decode(respStr);
-      if (res.statusCode == 200) {
-        Navigator.pop(context, res.statusCode);
-      } else {
-        Scaffold.of(submitContext).showSnackBar(
-            SnackBar(content: Text("Error:${resDecoded["message"]}")));
-      }
-    } catch (e) {
+    if (submitRes["statusCode"] != null && submitRes["statusCode"] == 200) {
+      Navigator.pop(context, submitRes["statusCode"]);
+    } else {
       Scaffold.of(submitContext)
-          .showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+        ..removeCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+                "Error \n- Status: ${submitRes["statusCode"]} \n- Message: ${submitRes["message"]}"),
+            duration: Duration(seconds: 5),
+          ),
+        );
     }
   }
 

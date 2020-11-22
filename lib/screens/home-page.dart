@@ -16,7 +16,12 @@ class MyHomePage extends StatelessWidget {
     if (result == 200) {
       Scaffold.of(addButtonContext)
         ..removeCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text("Berhasil menambah buku")));
+        ..showSnackBar(
+          SnackBar(
+            content: Text("Berhasil menambah buku"),
+            backgroundColor: Colors.greenAccent.shade700,
+          ),
+        );
       final bookListData = Provider.of<BookListProvider>(
         addButtonContext,
         listen: false,
