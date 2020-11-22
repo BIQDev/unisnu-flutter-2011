@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:perpus/providers/booklist_provider.dart';
 import 'package:perpus/screens/book-input.dart';
 import 'package:perpus/widgets/home/book-list.dart';
 import 'package:perpus/widgets/home/header.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({Key key}) : super(key: key);
+
+  _newBook(BuildContext addButtonContext) async {
+    final result = await Navigator.of(addButtonContext).pushNamed(
+      BookInputScreen.routeName,
+    );
+
+    if (result == 200) {
+      Scaffold.of(addButtonContext)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text("Berhasil menambah buku")));
+      final bookListData = Provider.of<BookListProvider>(
+        addButtonContext,
+        listen: false,
+      );
+      bookListData.fetchList(addButtonContext);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +37,17 @@ class MyHomePage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => {
-          Navigator.of(context).pushNamed(
-            BookInputScreen.routeName,
-          ),
+      floatingActionButton: Builder(
+        builder: (BuildContext addButtonContext) {
+          return FloatingActionButton(
+            onPressed: () {
+              this._newBook(addButtonContext);
+            },
+            tooltip: 'New Product',
+            child: Icon(Icons.add),
+          );
         },
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }

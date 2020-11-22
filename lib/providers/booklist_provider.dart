@@ -37,7 +37,7 @@ class BookListProvider with ChangeNotifier {
 
   Future<void> fetchList(BuildContext context) async {
     this._isFetching = true;
-    final settingData = Provider.of<SettingProvider>(context);
+    final settingData = Provider.of<SettingProvider>(context, listen: false);
     String url =
         "${settingData.setting.apiHost}/perpus-api/booklist/${settingData.setting.userName}";
     http.Response res;

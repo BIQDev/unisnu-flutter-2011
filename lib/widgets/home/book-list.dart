@@ -15,15 +15,13 @@ class _BookListState extends State<BookList> {
   List<BookListModel> _bookList;
   String _apiHost;
   bool _isInitialized;
-  bool _isFetching;
 
   @override
   void didChangeDependencies() {
-    final settingData = Provider.of<SettingProvider>(context);
+    final settingData = Provider.of<SettingProvider>(context, listen: false);
     this._apiHost = settingData.setting.apiHost;
-    final bookListData = Provider.of<BookListProvider>(context);
+    final bookListData = Provider.of<BookListProvider>(context, listen: false);
     this._bookList = bookListData.list;
-    this._isFetching = bookListData.isFetching;
 
     if (this._isInitialized == null || !this._isInitialized) {
       bookListData.fetchList(context);

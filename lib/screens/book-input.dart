@@ -1,6 +1,14 @@
 import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:mime/mime.dart';
+
+import 'package:perpus/providers/setting_provider.dart';
 
 class BookInputScreenArguments {
   final String id;
@@ -22,6 +30,9 @@ class _BookInputScreenState extends State<BookInputScreen> {
   bool _isInitialized;
   BookInputScreenArguments _args;
 
+  String _apiHost = "";
+  String _userName = "";
+
   File _image;
   final picker = ImagePicker();
 
@@ -31,6 +42,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+
         this._setInputValid();
       } else {
         print('No image selected.');
@@ -42,7 +54,10 @@ class _BookInputScreenState extends State<BookInputScreen> {
   void didChangeDependencies() {
     if (this._isInitialized == null || this._isInitialized) {
       this._args = ModalRoute.of(context).settings.arguments;
-
+      SettingProvider settingData =
+          Provider.of<SettingProvider>(context, listen: false);
+      this._apiHost = settingData.setting.apiHost;
+      this._userName = settingData.setting.userName;
       if (this._args != null && this._args.id != null) {
         this._title = this._args.title;
       }
@@ -56,6 +71,41 @@ class _BookInputScreenState extends State<BookInputScreen> {
   void _setInputValid() {
     this._inputIsValid =
         this._title != null && this._title != "" && this._image != null;
+  }
+
+  bool get inputIsValid {
+    return this._inputIsValid;
+  }
+
+  Future<void> _submit(BuildContext submitContext) async {
+    if (!this.inputIsValid) {
+      return;
+    }
+
+    List mimeStr = lookupMimeType(this._image.path).split("/");
+
+    var imageBytes = await this._image.readAsBytes();
+    var uri =
+        Uri.parse('${this._apiHost}/perpus-api/booklist/${this._userName}');
+    var request = http.MultipartRequest('POST', uri)
+      ..fields['title'] = this._title
+      ..files.add(http.MultipartFile.fromBytes('image', imageBytes,
+          filename: path.basename(this._image.path),
+          contentType: MediaType(mimeStr[0], mimeStr[1])));
+    try {
+      http.StreamedResponse res = await request.send();
+      final String respStr = await res.stream.bytesToString();
+      Map<String, dynamic> resDecoded = json.decode(respStr);
+      if (res.statusCode == 200) {
+        Navigator.pop(context, res.statusCode);
+      } else {
+        Scaffold.of(submitContext).showSnackBar(
+            SnackBar(content: Text("Error:${resDecoded["message"]}")));
+      }
+    } catch (e) {
+      Scaffold.of(submitContext)
+          .showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    }
   }
 
   @override
@@ -101,11 +151,17 @@ class _BookInputScreenState extends State<BookInputScreen> {
                         ),
                 ),
                 SizedBox(height: 10),
-                RaisedButton(
-                  child: Text("Simpan"),
-                  color: Colors.lightBlueAccent,
-                  onPressed: !this._inputIsValid ? null : () {},
-                )
+                Builder(builder: (BuildContext submitContext) {
+                  return RaisedButton(
+                    child: Text("Simpan"),
+                    color: Colors.lightBlueAccent,
+                    onPressed: !this.inputIsValid
+                        ? null
+                        : () {
+                            this._submit(submitContext);
+                          },
+                  );
+                })
               ],
             ),
           ),
