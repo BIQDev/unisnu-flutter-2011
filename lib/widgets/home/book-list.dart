@@ -15,6 +15,7 @@ class _BookListState extends State<BookList> {
   List<BookListModel> _bookList;
   String _apiHost;
   bool _isInitialized;
+  bool _isFetching;
 
   // @override
   // void initState() {
@@ -32,6 +33,7 @@ class _BookListState extends State<BookList> {
     this._apiHost = settingData.setting.apiHost;
     final bookListData = Provider.of<BookListProvider>(context);
     this._bookList = bookListData.list;
+    this._isFetching = bookListData.isFetching;
 
     if (this._isInitialized == null || !this._isInitialized) {
       bookListData.fetchList(context);
@@ -43,21 +45,29 @@ class _BookListState extends State<BookList> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: EdgeInsets.all(10),
-      itemCount: this._bookList == null ? 0 : this._bookList.length,
-      itemBuilder: (ctx, i) => BookListItem(
-        apiHost: this._apiHost,
-        id: this._bookList[i].id,
-        title: this._bookList[i].title,
-        imagePath: this._bookList[i].imagePath,
-      ),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 8 / 7,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-      ),
-    );
+    bool isFetching = context.watch<BookListProvider>().isFetching;
+    return isFetching == null || isFetching
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+            ],
+          )
+        : GridView.builder(
+            padding: EdgeInsets.all(10),
+            itemCount: this._bookList == null ? 0 : this._bookList.length,
+            itemBuilder: (ctx, i) => BookListItem(
+              apiHost: this._apiHost,
+              id: this._bookList[i].id,
+              title: this._bookList[i].title,
+              imagePath: this._bookList[i].imagePath,
+            ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 8 / 7,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+          );
   }
 }
