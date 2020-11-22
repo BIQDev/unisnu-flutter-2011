@@ -28,18 +28,23 @@ class BookListProvider with ChangeNotifier {
     // ),
   ];
 
-  bool _isFetching = false;
+  bool _isReading = false;
+  bool _isCreating = false;
 
   List<BookListModel> get list {
     return [...this._list];
   }
 
-  bool get isFetching {
-    return this._isFetching;
+  bool get isReading {
+    return this._isReading;
+  }
+
+  bool get isCreating {
+    return this._isCreating;
   }
 
   Future<void> read(BuildContext context) async {
-    this._isFetching = true;
+    this._isReading = true;
     final settingData = Provider.of<SettingProvider>(context, listen: false);
     String url =
         "${settingData.setting.apiHost}/perpus-api/booklist/${settingData.setting.userName}";
@@ -48,7 +53,7 @@ class BookListProvider with ChangeNotifier {
       final resTmp = await http.get(url);
       res = resTmp;
     } catch (e) {
-      this._isFetching = false;
+      this._isReading = false;
       throw (e);
     }
     List<BookListModel> bookListData = (json.decode(res.body)["data"] as List)
@@ -56,17 +61,21 @@ class BookListProvider with ChangeNotifier {
         .toList();
     this._list = bookListData;
 
-    this._isFetching = false;
+    this._isReading = false;
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>> write(
+  Future<Map<String, dynamic>> create(
       BuildContext context, BookListModel data) async {
+    this._isCreating = true;
+    notifyListeners();
     final settingData = Provider.of<SettingProvider>(context, listen: false);
     if (data == null || data.title == "") {
       Map<String, dynamic> resInvalid = new Map<String, dynamic>();
       resInvalid["statusCode"] = 400;
       resInvalid["message"] = "Input is not valid";
+      this._isCreating = false;
+      notifyListeners();
       return resInvalid;
     }
 
@@ -87,11 +96,15 @@ class BookListProvider with ChangeNotifier {
       final String respStr = await res.stream.bytesToString();
       Map<String, dynamic> resDecoded = json.decode(respStr);
       resDecoded["statusCode"] = res.statusCode;
+      this._isCreating = false;
+      notifyListeners();
       return resDecoded;
     } catch (e) {
       Map<String, dynamic> resInvalid = new Map<String, dynamic>();
       resInvalid["statusCode"] = statusCode != null ? statusCode : 400;
       resInvalid["message"] = e.toString();
+      this._isCreating = false;
+      notifyListeners();
       return resInvalid;
     }
   }

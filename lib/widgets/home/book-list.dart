@@ -33,8 +33,8 @@ class _BookListState extends State<BookList> {
 
   @override
   Widget build(BuildContext context) {
-    bool isFetching = context.watch<BookListProvider>().isFetching;
-    return isFetching == null || isFetching
+    bool isReading = context.watch<BookListProvider>().isReading;
+    return isReading == null || isReading
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[

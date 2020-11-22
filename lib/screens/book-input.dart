@@ -85,7 +85,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
     final BookListProvider booklistData =
         Provider.of<BookListProvider>(submitContext, listen: false);
     Map<String, dynamic> submitRes =
-        await booklistData.write(submitContext, inputData);
+        await booklistData.create(submitContext, inputData);
 
     if (submitRes["statusCode"] != null && submitRes["statusCode"] == 200) {
       Navigator.pop(context, submitRes["statusCode"]);
@@ -97,6 +97,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
             content: Text(
                 "Error \n- Status: ${submitRes["statusCode"]} \n- Message: ${submitRes["message"]}"),
             duration: Duration(seconds: 5),
+            backgroundColor: Colors.redAccent.shade400,
           ),
         );
     }
@@ -104,6 +105,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isCreating = context.watch<BookListProvider>().isCreating;
     return Scaffold(
       appBar: AppBar(
         title: this._args == null || this._args.id == null
@@ -149,13 +151,21 @@ class _BookInputScreenState extends State<BookInputScreen> {
                   return RaisedButton(
                     child: Text("Simpan"),
                     color: Colors.lightBlueAccent,
-                    onPressed: !this.inputIsValid
+                    onPressed: !this.inputIsValid || isCreating
                         ? null
                         : () {
                             this._submit(submitContext);
                           },
                   );
-                })
+                }),
+                isCreating == false
+                    ? Container()
+                    : Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 50),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
               ],
             ),
           ),
