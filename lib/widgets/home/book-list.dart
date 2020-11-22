@@ -17,16 +17,6 @@ class _BookListState extends State<BookList> {
   bool _isInitialized;
   bool _isFetching;
 
-  // @override
-  // void initState() {
-  //   Future.delayed(Duration.zero).then((_) {
-  //     final bookListData = Provider.of<BookListProvider>(context);
-  //     bookListData.fetchList(context);
-  //   });
-
-  //   super.initState();
-  // }
-
   @override
   void didChangeDependencies() {
     final settingData = Provider.of<SettingProvider>(context);

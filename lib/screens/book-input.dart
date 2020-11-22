@@ -17,7 +17,11 @@ class BookInputScreen extends StatefulWidget {
 }
 
 class _BookInputScreenState extends State<BookInputScreen> {
-  String title;
+  String _title;
+  bool _inputIsValid = false;
+  bool _isInitialized;
+  BookInputScreenArguments _args;
+
   File _image;
   final picker = ImagePicker();
 
@@ -27,6 +31,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        this._setInputValid();
       } else {
         print('No image selected.');
       }
@@ -34,15 +39,30 @@ class _BookInputScreenState extends State<BookInputScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final BookInputScreenArguments args =
-        ModalRoute.of(context).settings.arguments;
-    if (args != null && args.id != null) {
-      this.title = args.title;
+  void didChangeDependencies() {
+    if (this._isInitialized == null || this._isInitialized) {
+      this._args = ModalRoute.of(context).settings.arguments;
+
+      if (this._args != null && this._args.id != null) {
+        this._title = this._args.title;
+      }
+
+      this._setInputValid();
+      this._isInitialized = true;
     }
+    super.didChangeDependencies();
+  }
+
+  void _setInputValid() {
+    this._inputIsValid =
+        this._title != null && this._title != "" && this._image != null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: args == null || args.id == null
+        title: this._args == null || this._args.id == null
             ? const Text("Tambah Buku")
             : const Text("Edit Buku"),
       ),
@@ -55,7 +75,13 @@ class _BookInputScreenState extends State<BookInputScreen> {
               children: <Widget>[
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Title'),
-                  initialValue: this.title,
+                  initialValue: this._title,
+                  onChanged: (v) {
+                    setState(() {
+                      this._title = v;
+                      this._setInputValid();
+                    });
+                  },
                 ),
                 SizedBox(height: 10),
                 FlatButton.icon(
@@ -78,7 +104,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
                 RaisedButton(
                   child: Text("Simpan"),
                   color: Colors.lightBlueAccent,
-                  onPressed: () {},
+                  onPressed: !this._inputIsValid ? null : () {},
                 )
               ],
             ),
