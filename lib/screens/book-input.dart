@@ -28,6 +28,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
   String _title;
   bool _inputIsValid = false;
   bool _isInitialized;
+  bool _isSubmitting = false;
   BookInputScreenArguments _args;
 
   String _apiHost = "";

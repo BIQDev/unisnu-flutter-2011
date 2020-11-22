@@ -35,7 +35,7 @@ class BookListProvider with ChangeNotifier {
     return this._isFetching;
   }
 
-  Future<void> fetchList(BuildContext context) async {
+  Future<void> read(BuildContext context) async {
     this._isFetching = true;
     final settingData = Provider.of<SettingProvider>(context, listen: false);
     String url =

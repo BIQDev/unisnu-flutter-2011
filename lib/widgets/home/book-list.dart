@@ -24,7 +24,7 @@ class _BookListState extends State<BookList> {
     this._bookList = bookListData.list;
 
     if (this._isInitialized == null || !this._isInitialized) {
-      bookListData.fetchList(context);
+      bookListData.read(context);
       this._isInitialized = true;
     }
 

@@ -21,7 +21,7 @@ class MyHomePage extends StatelessWidget {
         addButtonContext,
         listen: false,
       );
-      bookListData.fetchList(addButtonContext);
+      bookListData.read(addButtonContext);
     }
   }
 
