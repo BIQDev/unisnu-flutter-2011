@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:perpus/models/booklist_model.dart';
-import 'package:perpus/providers/setting_provider.dart';
-import 'package:provider/provider.dart';
-
-import 'package:perpus/providers/booklist_provider.dart';
-import 'package:perpus/widgets/home/book-list-item.dart';
 
 class BookList extends StatefulWidget {
   @override
@@ -12,50 +6,18 @@ class BookList extends StatefulWidget {
 }
 
 class _BookListState extends State<BookList> {
-  List<BookListModel> _bookList;
-  String _apiHost;
-  bool _isInitialized;
-
-  @override
-  void didChangeDependencies() {
-    final settingData = Provider.of<SettingProvider>(context, listen: false);
-    this._apiHost = settingData.setting.apiHost;
-    final bookListData = Provider.of<BookListProvider>(context, listen: false);
-    this._bookList = bookListData.list;
-
-    if (this._isInitialized == null || !this._isInitialized) {
-      bookListData.read(context);
-      this._isInitialized = true;
-    }
-
-    super.didChangeDependencies();
-  }
-
   @override
   Widget build(BuildContext context) {
-    bool isReading = context.watch<BookListProvider>().isReading;
-    return isReading == null || isReading
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(),
-            ],
-          )
-        : GridView.builder(
-            padding: EdgeInsets.all(10),
-            itemCount: this._bookList == null ? 0 : this._bookList.length,
-            itemBuilder: (ctx, i) => BookListItem(
-              apiHost: this._apiHost,
-              id: this._bookList[i].id,
-              title: this._bookList[i].title,
-              imagePath: this._bookList[i].imagePath,
-            ),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 8 / 7,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-          );
+    return GridView.builder(
+      padding: EdgeInsets.all(10),
+      itemCount: 1,
+      itemBuilder: (ctx, i) => Text("Dummy"),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 8 / 7,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+      ),
+    );
   }
 }

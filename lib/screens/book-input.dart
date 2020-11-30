@@ -1,11 +1,6 @@
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:perpus/models/booklist_model.dart';
-import 'package:perpus/providers/booklist_provider.dart';
-import 'package:provider/provider.dart';
-
-import 'package:perpus/providers/setting_provider.dart';
 
 class BookInputScreenArguments {
   final String id;
@@ -24,12 +19,7 @@ class BookInputScreen extends StatefulWidget {
 class _BookInputScreenState extends State<BookInputScreen> {
   String _title;
   bool _inputIsValid = false;
-  bool _isInitialized;
-  bool _isSubmitting = false;
   BookInputScreenArguments _args;
-
-  String _apiHost = "";
-  String _userName = "";
 
   File _image;
   final picker = ImagePicker();
@@ -48,24 +38,6 @@ class _BookInputScreenState extends State<BookInputScreen> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    if (this._isInitialized == null || this._isInitialized) {
-      this._args = ModalRoute.of(context).settings.arguments;
-      SettingProvider settingData =
-          Provider.of<SettingProvider>(context, listen: false);
-      this._apiHost = settingData.setting.apiHost;
-      this._userName = settingData.setting.userName;
-      if (this._args != null && this._args.id != null) {
-        this._title = this._args.title;
-      }
-
-      this._setInputValid();
-      this._isInitialized = true;
-    }
-    super.didChangeDependencies();
-  }
-
   void _setInputValid() {
     this._inputIsValid =
         this._title != null && this._title != "" && this._image != null;
@@ -75,37 +47,8 @@ class _BookInputScreenState extends State<BookInputScreen> {
     return this._inputIsValid;
   }
 
-  Future<void> _submit(BuildContext submitContext) async {
-    final BookListModel inputData = new BookListModel(
-      id: null,
-      title: this._title,
-      imagePath: null,
-      imageFile: this._image,
-    );
-    final BookListProvider booklistData =
-        Provider.of<BookListProvider>(submitContext, listen: false);
-    Map<String, dynamic> submitRes =
-        await booklistData.create(submitContext, inputData);
-
-    if (submitRes["statusCode"] != null && submitRes["statusCode"] == 200) {
-      Navigator.pop(context, submitRes["statusCode"]);
-    } else {
-      Scaffold.of(submitContext)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text(
-                "Error \n- Status: ${submitRes["statusCode"]} \n- Message: ${submitRes["message"]}"),
-            duration: Duration(seconds: 5),
-            backgroundColor: Colors.redAccent.shade400,
-          ),
-        );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    bool isCreating = context.watch<BookListProvider>().isCreating;
     return Scaffold(
       appBar: AppBar(
         title: this._args == null || this._args.id == null
@@ -151,21 +94,9 @@ class _BookInputScreenState extends State<BookInputScreen> {
                   return RaisedButton(
                     child: Text("Simpan"),
                     color: Colors.lightBlueAccent,
-                    onPressed: !this.inputIsValid || isCreating
-                        ? null
-                        : () {
-                            this._submit(submitContext);
-                          },
+                    onPressed: null,
                   );
                 }),
-                isCreating == false
-                    ? Container()
-                    : Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 50),
-                          child: CircularProgressIndicator(),
-                        ),
-                      )
               ],
             ),
           ),
