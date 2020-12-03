@@ -94,7 +94,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
                   return RaisedButton(
                     child: Text("Simpan"),
                     color: Colors.lightBlueAccent,
-                    onPressed: null,
+                    onPressed: !this.inputIsValid ? null : () {},
                   );
                 }),
               ],
