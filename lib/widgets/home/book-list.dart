@@ -12,19 +12,15 @@ class BookList extends StatefulWidget {
 }
 
 class _BookListState extends State<BookList> {
-  List<BookListModel> _bookList;
   String _apiHost;
   bool _isInitialized;
 
   @override
   void didChangeDependencies() {
-    final settingData = Provider.of<SettingProvider>(context, listen: false);
-    this._apiHost = settingData.setting.apiHost;
-    final bookListData = Provider.of<BookListProvider>(context, listen: false);
-    this._bookList = bookListData.list;
+    this._apiHost = context.read<SettingProvider>().setting.apiHost;
 
     if (this._isInitialized == null || !this._isInitialized) {
-      bookListData.read(context);
+      context.read<BookListProvider>().read(context);
       this._isInitialized = true;
     }
 
@@ -34,6 +30,8 @@ class _BookListState extends State<BookList> {
   @override
   Widget build(BuildContext context) {
     bool isReading = context.watch<BookListProvider>().isReading;
+    List<BookListModel> bookList = context.watch<BookListProvider>().list;
+
     return isReading == null || isReading
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -43,12 +41,12 @@ class _BookListState extends State<BookList> {
           )
         : GridView.builder(
             padding: EdgeInsets.all(10),
-            itemCount: this._bookList == null ? 0 : this._bookList.length,
+            itemCount: bookList == null ? 0 : bookList.length,
             itemBuilder: (ctx, i) => BookListItem(
               apiHost: this._apiHost,
-              id: this._bookList[i].id,
-              title: this._bookList[i].title,
-              imagePath: this._bookList[i].imagePath,
+              id: bookList[i].id,
+              title: bookList[i].title,
+              imagePath: bookList[i].imagePath,
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
