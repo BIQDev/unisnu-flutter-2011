@@ -45,17 +45,17 @@ class BookListProvider with ChangeNotifier {
       http.StreamedResponse res = await request.send();
       statusCode = res.statusCode;
       final String respStr = await res.stream.bytesToString();
-      Map<String, dynamic> resDecoded = json.decode(respStr);
+      Map<String, dynamic> resDecoded = json.decode(respStr); // Decode JSON
       resDecoded["statusCode"] = res.statusCode;
       this._isCreating = false;
-      notifyListeners();
+      notifyListeners(); //Prosedur standard untuk memberitahu "listener" bahwa ada perubahan
       return resDecoded;
     } catch (e) {
       Map<String, dynamic> resInvalid = new Map<String, dynamic>();
       resInvalid["statusCode"] = statusCode != null ? statusCode : 400;
       resInvalid["message"] = e.toString();
       this._isCreating = false;
-      notifyListeners();
+      notifyListeners(); //Prosedur standard untuk memberitahu "listener" bahwa ada perubahan
       return resInvalid;
     }
   }
