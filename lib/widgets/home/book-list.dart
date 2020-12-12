@@ -34,21 +34,30 @@ class _BookListState extends State<BookList> {
         Provider.of<SettingProvider>(context, listen: false).setting.apiHost;
     List<BookListModel> bookList = context.watch<BookListProvider>().list;
 
-    return GridView.builder(
-      padding: EdgeInsets.all(10),
-      itemCount: bookList.length,
-      itemBuilder: (ctx, i) => BookListItem(
-        id: bookList[i].id,
-        apiHost: apiHost,
-        imagePath: bookList[i].imagePath,
-        title: bookList[i].title,
-      ),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 8 / 7,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-      ),
-    );
+    bool isReading = context.watch<BookListProvider>().isReading;
+
+    return isReading == null || isReading
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+            ],
+          )
+        : GridView.builder(
+            padding: EdgeInsets.all(10),
+            itemCount: bookList.length,
+            itemBuilder: (ctx, i) => BookListItem(
+              id: bookList[i].id,
+              apiHost: apiHost,
+              imagePath: bookList[i].imagePath,
+              title: bookList[i].title,
+            ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 8 / 7,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+          );
   }
 }
