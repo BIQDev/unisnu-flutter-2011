@@ -12,6 +12,22 @@ class BookList extends StatefulWidget {
 }
 
 class _BookListState extends State<BookList> {
+  // _isInitialized adalah helper variable
+  // berguna untuk mencegah "pemanggilan berulang"
+  // digunakan pada fungsi "if" dibawah
+  // karena didChangeDependencies() pada komponen akan dipanggil lebih dari 1 kali
+  bool _isInitialized;
+  @override
+  void didChangeDependencies() {
+    // If dibawah ini mencegah pemanggilan ganda dari blok didalamnya
+    if (this._isInitialized == null || !this._isInitialized) {
+      context.read<BookListProvider>().read(context);
+      this._isInitialized = true;
+    }
+    // Memanggil "parent" didChangeDependencies(), harus selalu dilakukan
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     var apiHost =

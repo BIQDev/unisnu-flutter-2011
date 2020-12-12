@@ -90,4 +90,48 @@ class BookListProvider with ChangeNotifier {
       return resInvalid;
     }
   }
+
+  // _isReading Digunakan untuk menampilkan "loading indicator"
+  // Dan juga logic lain yang membutuhkannya
+  bool _isReading = false;
+  // Getter dari _isReading
+  bool get isReading {
+    return this._isReading;
+  }
+
+  Future<void> read(BuildContext context) async {
+    // Tandai "true" agar aplikasi tahu sedang terjadi proses (R)ead
+    this._isReading = true;
+    final settingData = Provider.of<SettingProvider>(context, listen: false);
+    // Susun URL dengan menggunakan variable dari "setting provider" ditambah pattern API kita
+    String url =
+        "${settingData.setting.apiHost}/perpus-api/booklist/${settingData.setting.userName}";
+
+    // res adalah variable untuk menampung Response dari server
+    http.Response res;
+
+    // ada kemungkinan error saat http.get(), jadi gunakan block "try"
+    try {
+      final resTmp = await http.get(url);
+      res = resTmp;
+    } catch (e) {
+      this._isReading = false;
+      throw (e);
+    }
+    List<BookListModel> bookListData = (json.decode(res.body)["data"]
+            as List) // Decode response sebagai "List"
+        .map((i) => BookListModel.fromJson(
+            i)) // Format "List" agar sesuai dengan BookListModel
+        .toList(); // Terakhir, convert agar jadi "List of BookListModel" ( List<BookListModel> )
+
+    // Menyimpan state ke variable _list,
+    // ini variable yg akan dibaca oleh component yang membutuhkan daftar buku
+    this._list = bookListData;
+
+    // Kembalikan _isReading ke false yang berarti proses (R)ead selesai
+    this._isReading = false;
+
+    // notifyListeners() Memberitahukan kepada semua listener bahwa ada perubahan di provider ini
+    notifyListeners();
+  }
 }
