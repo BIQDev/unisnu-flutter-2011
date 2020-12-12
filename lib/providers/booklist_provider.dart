@@ -12,6 +12,10 @@ import 'package:perpus/providers/setting_provider.dart';
 class BookListProvider with ChangeNotifier {
   bool _isCreating = false;
 
+  bool get isCreating {
+    return this._isCreating;
+  }
+
   Future<Map<String, dynamic>> create(
       BuildContext context, BookListModel data) async {
     this._isCreating = true;
