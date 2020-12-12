@@ -47,6 +47,7 @@ class BookListProvider with ChangeNotifier {
     this._isCreating = true;
     notifyListeners();
     final settingData = Provider.of<SettingProvider>(context, listen: false);
+    // Validasi data jika mungkin kosong atau null
     if (data == null || data.title == "") {
       Map<String, dynamic> resInvalid = new Map<String, dynamic>();
       resInvalid["statusCode"] = 400;
@@ -56,11 +57,13 @@ class BookListProvider with ChangeNotifier {
       return resInvalid;
     }
 
+    // Membaca data gambar/image untuk diupload
     List mimeStr = lookupMimeType(data.imageFile.path).split("/");
-
     var imageBytes = await data.imageFile.readAsBytes();
+
     var uri = Uri.parse(
         '${settingData.setting.apiHost}/perpus-api/booklist/${settingData.setting.userName}');
+    // Request HTTP dengan POST verb
     var request = http.MultipartRequest('POST', uri)
       ..fields['title'] = data.title
       ..files.add(http.MultipartFile.fromBytes('image', imageBytes,
@@ -68,6 +71,7 @@ class BookListProvider with ChangeNotifier {
           contentType: MediaType(mimeStr[0], mimeStr[1])));
     int statusCode;
     try {
+      // Gunakan blok "try" karena ada kemungkinan error yang tidak kita ketahui saat ini dari fungsu json.decode()
       http.StreamedResponse res = await request.send();
       statusCode = res.statusCode;
       final String respStr = await res.stream.bytesToString();
@@ -77,6 +81,7 @@ class BookListProvider with ChangeNotifier {
       notifyListeners(); //Prosedur standard untuk memberitahu "listener" bahwa ada perubahan
       return resDecoded;
     } catch (e) {
+      // Jika terjadi error
       Map<String, dynamic> resInvalid = new Map<String, dynamic>();
       resInvalid["statusCode"] = statusCode != null ? statusCode : 400;
       resInvalid["message"] = e.toString();
