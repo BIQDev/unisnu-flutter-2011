@@ -1,6 +1,10 @@
+import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:perpus/models/booklist_model.dart';
+import 'package:perpus/providers/booklist_provider.dart';
 
 class BookInputScreenArguments {
   final String id;
@@ -47,8 +51,41 @@ class _BookInputScreenState extends State<BookInputScreen> {
     return this._inputIsValid;
   }
 
+  Future<void> _submit(BuildContext submitContext) async {
+    this._create(submitContext);
+  }
+
+  Future<void> _create(BuildContext submitContext) async {
+    final BookListModel inputData = new BookListModel(
+      id: null,
+      title: this._title,
+      imagePath: null,
+      imageFile: this._image,
+    );
+    final BookListProvider booklistData =
+        Provider.of<BookListProvider>(submitContext, listen: false);
+    Map<String, dynamic> submitRes =
+        await booklistData.create(submitContext, inputData);
+
+    if (submitRes["statusCode"] != null && submitRes["statusCode"] == 200) {
+      Navigator.pop(context, submitRes["statusCode"]);
+    } else {
+      Scaffold.of(submitContext)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+                "Error \n- Status: ${submitRes["statusCode"]} \n- Message: ${submitRes["message"]}"),
+            duration: Duration(seconds: 5),
+            backgroundColor: Colors.redAccent.shade400,
+          ),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isCreating = context.watch<BookListProvider>().isCreating;
     return Scaffold(
       appBar: AppBar(
         title: this._args == null || this._args.id == null
@@ -94,9 +131,21 @@ class _BookInputScreenState extends State<BookInputScreen> {
                   return RaisedButton(
                     child: Text("Simpan"),
                     color: Colors.lightBlueAccent,
-                    onPressed: !this.inputIsValid ? null : () {},
+                    onPressed: !this.inputIsValid || isCreating
+                        ? null
+                        : () {
+                            this._submit(submitContext);
+                          },
                   );
                 }),
+                isCreating == false
+                    ? Container()
+                    : Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 50),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
               ],
             ),
           ),
