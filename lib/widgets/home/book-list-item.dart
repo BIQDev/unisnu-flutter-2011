@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:perpus/screens/book-input.dart';
+
 class BookListItem extends StatelessWidget {
   @required
   final String apiHost;
@@ -11,6 +13,14 @@ class BookListItem extends StatelessWidget {
   final String imagePath;
 
   BookListItem({this.apiHost, this.id, this.title, this.imagePath});
+
+  _update(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      BookInputScreen.routeName,
+      arguments: BookInputScreenArguments(
+          id: this.id, title: this.title, imagePath: this.imagePath),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +35,12 @@ class BookListItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           IconButton(
-            splashColor: Colors.orange[100],
-            color: Colors.deepOrangeAccent,
-            icon: Icon(Icons.edit),
-            onPressed: () {},
-          ),
+              splashColor: Colors.orange[100],
+              color: Colors.deepOrangeAccent,
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                this._update(context);
+              }),
           IconButton(
             color: Colors.redAccent,
             icon: Icon(Icons.delete),

@@ -86,6 +86,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
   @override
   Widget build(BuildContext context) {
     bool isCreating = context.watch<BookListProvider>().isCreating;
+    this._args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         title: this._args == null || this._args.id == null
