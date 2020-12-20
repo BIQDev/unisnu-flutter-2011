@@ -24,6 +24,7 @@ class _BookInputScreenState extends State<BookInputScreen> {
   String _title;
   bool _inputIsValid = false;
   BookInputScreenArguments _args;
+  bool _isInitialized;
 
   File _image;
   final picker = ImagePicker();
@@ -40,6 +41,20 @@ class _BookInputScreenState extends State<BookInputScreen> {
         print('No image selected.');
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (this._isInitialized == null || !this._isInitialized) {
+      this._args = ModalRoute.of(context).settings.arguments;
+      if (this._args != null && this._args.id != null) {
+        this._title = this._args.title;
+      }
+
+      this._setInputValid();
+      this._isInitialized = true;
+    }
+    super.didChangeDependencies();
   }
 
   void _setInputValid() {
